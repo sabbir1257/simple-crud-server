@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const { MongoClient, ServerApiVersion } = require("mongodb");
 const port = process.env.PORT || 5001;
 const app = express();
 
@@ -7,11 +8,10 @@ app.use(cors());
 app.use(express.json());
 
 // mdsarkerps
-// 3JnblhiEyeZ7Exre
+//
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri =
-  "mongodb+srv://mdsarkerps:<db_password>@cluster0.ury0v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+  "mongodb+srv://mdsarkerps:3JnblhiEyeZ7Exre@cluster0.ury0v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -37,6 +37,7 @@ async function run() {
   }
 }
 run().catch(console.dir);
+
 
 app.get("/", (req, res) => {
   res.send("SIMPLE CRUD IS RUNNING");
