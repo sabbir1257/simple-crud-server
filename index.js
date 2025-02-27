@@ -1,4 +1,4 @@
-/* const express = require("express");
+const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const port = process.env.PORT || 5001;
@@ -26,9 +26,13 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+    const userCollection = client.db("usersDB").collection("users");
 
-    const database = client.db("usersDB");
-    const userCollection = database.collection("users");
+    app.get("/users", async (req, res) => {
+      const cursor = userCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
     app.post("/users", async (req, res) => {
       const user = req.body;
@@ -42,12 +46,11 @@ async function run() {
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
   }
 }
-run().catch(console.dir);
+run();
 
 app.get("/", (req, res) => {
   res.send("SIMPLE CRUD IS RUNNING");
@@ -55,56 +58,4 @@ app.get("/", (req, res) => {
 
 app.listen(port, () => {
   console.log(`SIMPLE Crud is running on port: ${port}`);
-});
- */
-
-const express = require("express");
-const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
-
-const port = process.env.PORT || 5001;
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-const uri = "mongodb+srv://mdsarkerps:3JnblhiEyeZ7Exre@cluster0.ury0v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
-
-// ✅ Connect to MongoDB once and reuse the connection
-async function connectDB() {
-  try {
-    await client.connect();
-    console.log("Connected to MongoDB!");
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
-  }
-}
-
-connectDB();
-
-const database = client.db("usersDB");
-const userCollection = database.collection("users");
-
-// ✅ Keep the connection open and use it in routes
-app.post("/users", async (req, res) => {
-    const user = req.body;
-    console.log("New user:", user);
-    const result = await userCollection.insertOne(user);
-    res.send(result);
-});
-
-app.get("/", (req, res) => {
-  res.send("SIMPLE CRUD IS RUNNING");
-});
-
-app.listen(port, () => {
-  console.log(`SIMPLE CRUD is running on port: ${port}`);
 });
